@@ -1,23 +1,9 @@
 import random
+import re
+import src.settings as settings
 from threading import Timer
 
-
-VOWELS = 'aeiou'
-CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
-HAND_SIZE = 7
-BONUS_PTS = 50
-DEFAULT_TIME = 120 # in sec
-
-SCRABBLE_LETTER_VALUES = {
-    'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1,
-    'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8,
-    'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1,
-    'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1,
-    'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
-}
-
-WORDLIST_FILENAME = "words.txt"
-
+WORDLIST_FILENAME = "../words.txt"
 
 def load_words_from_file():
     """
@@ -72,9 +58,9 @@ def get_word_score(word, n):
     """
     result = 0
     for c in word:
-        result += SCRABBLE_LETTER_VALUES[c]
+        result += settings.SCRABBLE_LETTER_VALUES[c]
     result *= len(word)
-    if len(word) == n: result += BONUS_PTS
+    if len(word) == n: result += settings.BONUS_PTS
     return result
 
 
@@ -112,11 +98,11 @@ def deal_hand(n):
     num_vowels = n // 3
 
     for i in range(num_vowels):
-        x = VOWELS[random.randrange(0, len(VOWELS))]
+        x = settings.VOWELS[random.randrange(0, len(settings.VOWELS))]
         hand[x] = hand.get(x, 0) + 1
 
     for i in range(num_vowels, n):
-        x = CONSONANTS[random.randrange(0, len(CONSONANTS))]
+        x = settings.CONSONANTS[random.randrange(0, len(settings.CONSONANTS))]
         hand[x] = hand.get(x, 0) + 1
 
     return hand
@@ -218,8 +204,13 @@ def play_hand(hand, word_list, n, single = True, dif = 'e'):
     """
     current_sum = 0
 
+    with open('../data/game_settings.txt', 'r') as f:
+        line = f.readline()
+        nums = re.findall(r'\d+', line)
+        settings.DEFAULT_TIME = int(nums[0])
+
     current_dif = ['e', 'm', 'h', 'i'].index(dif)
-    timeout = DEFAULT_TIME - current_dif * 30
+    timeout = settings.DEFAULT_TIME - current_dif * 30
     t = Timer(timeout, print, ['\nPress Enter to continue', ''])
     t.start()
 
@@ -250,7 +241,7 @@ def play_hand(hand, word_list, n, single = True, dif = 'e'):
                 hand = update_hand(hand, word)
         if calculate_hand_len(hand) == 0:
             print("You got a 50 points bonus for using all letters!")
-            current_sum += BONUS_PTS
+            current_sum += settings.BONUS_PTS
     if single:
         print("Game over! Total score: " + str(current_sum) + " points.")
     t.cancel()
@@ -271,16 +262,21 @@ def play_game(word_list):
     2) When done playing the hand, repeat from step 1
     """
     flag = 0
+    with open('../data/game_settings.txt', 'r') as f:
+        line = f.readline()
+        nums = re.findall(r'\d+', line)
+        settings.HAND_SIZE = int(nums[0])
+
     while True:
         let = input("Enter n to deal a new hand, r to replay the last hand, or e to end the game: ")
         if let == "n":
-            hand = deal_hand(HAND_SIZE)
+            hand = deal_hand(settings.HAND_SIZE)
             flag = 1
-            play_hand(hand, word_list, HAND_SIZE)
+            play_hand(hand, word_list, settings.HAND_SIZE)
         elif let == "r" and flag == 0:
             print("You have not played a hand yet. Please play a new hand first!")
         elif let == "r" and flag == 1:
-            play_hand(hand, word_list, HAND_SIZE)
+            play_hand(hand, word_list, settings.HAND_SIZE)
         elif let == "e":
             break
         else:

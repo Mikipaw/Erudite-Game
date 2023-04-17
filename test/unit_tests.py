@@ -1,5 +1,4 @@
-from erudite_game import *
-
+from src.erudite_game import *
 
 def test_get_word_score():
     """
