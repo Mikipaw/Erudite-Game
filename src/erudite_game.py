@@ -20,6 +20,7 @@ def load_words_from_file():
         word_list.append(line.strip().lower())
 
     print("  ", len(word_list), "words loaded.")
+    input_file.close()
     return word_list
 
 
