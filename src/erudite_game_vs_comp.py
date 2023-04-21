@@ -1,18 +1,18 @@
 import src.erudite_game as sg
 import re
+from itertools import permutations
 
-def comp_choose_word(hand, word_list, n, difficulty ='i'):
+def comp_choose_word(hand, n, difficulty ='i'):
     """
-    Given a hand and a word_list, find the word that gives 
+    Given a hand and a WORDS_DICT, find the word that gives
     the maximum value score, and return it.
 
     This word should be calculated by considering all the words
-    in the word_list.
+    in the WORDS_DICT.
 
-    If no words in the word_list can be made from the hand, return None.
+    If no words in the WORDS_DICT can be made from the hand, return None.
 
     hand: dictionary (string -> int)
-    word_list: list (string)
     n: integer (HAND_SIZE; i.e., hand size required for additional points)
 
     returns: string or None
@@ -29,18 +29,20 @@ def comp_choose_word(hand, word_list, n, difficulty ='i'):
     best_word = None
 
     i = 0
-    while i < len(word_list):
-        if sg.is_valid_word(word_list[i], hand, word_list):
-            score = sg.get_word_score(word_list[i], n)
-            if score > best_score:
-                best_score = score
-                best_word = word_list[i]
-        i += sg.random.randint(1, shift)
+    for j in range(2, len(hand)):
+        for k in permutations(hand, j):
+            if sg.random.randint(1, shift) == 1:
+                if k in sg.WORDS_DICT:
+                    word = sg.WORDS_DICT[k]
+                    score = sg.get_word_score(word, n)
+                    if score > best_score:
+                        best_score = score
+                        best_word = word
 
     return best_word
 
 
-def comp_play_hand(hand, word_list, n, single = True, difficulty = 'h'):
+def comp_play_hand(hand, n, single = True, difficulty = 'h'):
     """
     Returns total score that computer achieved.
 
@@ -58,7 +60,6 @@ def comp_play_hand(hand, word_list, n, single = True, difficulty = 'h'):
     choices (i.e. comp_choose_word returns None).
 
     hand: dictionary (string -> int)
-    word_list: list (string)
     n: integer (HAND_SIZE; required for additional points)
     single: bool (default True)
     difficulty: str (default 'i')
@@ -68,13 +69,14 @@ def comp_play_hand(hand, word_list, n, single = True, difficulty = 'h'):
     while sg.calculate_hand_len(hand) > 0:
         print("Current computer's hand: ", end=' ')
         sg.display_hand(hand)
-        word = comp_choose_word(hand, word_list, n, difficulty)
+        word = comp_choose_word(hand, n, difficulty)
         if word is None:
             break
 
         else:
-            if not sg.is_valid_word(word, hand, word_list):
+            if not sg.is_valid_word(word, hand):
                 print('This is signalizing that computer is dumb...')
+                print('Please, tell the developer to fix some mistakes in code...')
                 break
             else:
                 score = sg.get_word_score(word, n)
@@ -90,14 +92,13 @@ def comp_play_hand(hand, word_list, n, single = True, difficulty = 'h'):
         print('Total score: ' + str(total_score) + ' points.')
     return total_score
 
-def play_vs_comp(hand, word_list, n):
+def play_vs_comp(hand, n):
     """
     Allows the user to play the given hand again computer, as follows:
 
     Same rules as in single game, but user will compete against computer
 
     hand: dictionary (string -> int)
-    word_list: list of lowercase strings
     n: integer (HAND_SIZE; required for additional points)
 
     """
@@ -107,8 +108,8 @@ def play_vs_comp(hand, word_list, n):
     while True:
         dif = input("Choose the difficulty: \n e - easy \n m - medium \n h - hard \n i - impossible \n")
         if dif in ['e', 'm', 'h', 'i']:
-            user_pts = sg.play_hand(hand, word_list, n, False, dif)
-            comp_pts = comp_play_hand(hand, word_list, n, False, dif)
+            user_pts = sg.play_hand(hand, n, False, dif)
+            comp_pts = comp_play_hand(hand, n, False, dif)
             number_of_rounds -= 1
             print("Round ended! \n Your points: " + str(user_pts) + "\n Computer's points: " + str(comp_pts))
             break
@@ -117,8 +118,8 @@ def play_vs_comp(hand, word_list, n):
 
     while number_of_rounds > 0:
         hand = sg.deal_hand(n)
-        user_pts += sg.play_hand(hand, word_list, n, False, dif)
-        comp_pts += comp_play_hand(hand, word_list, n, False, dif)
+        user_pts += sg.play_hand(hand, n, False, dif)
+        comp_pts += comp_play_hand(hand, n, False, dif)
         print("Round ended! \n Your points: " + str(user_pts) + "\n Computer's points: " + str(comp_pts))
         number_of_rounds -= 1
 
@@ -130,7 +131,7 @@ def play_vs_comp(hand, word_list, n):
         print("This is a draw today!")
 
 
-def play_game(word_list):
+def play_game():
     """
     Allow the user to play an arbitrary number of hands.
 
@@ -152,7 +153,6 @@ def play_game(word_list):
 
     4) After the computer or user has played the hand, repeat from step 1
 
-    word_list: list (string)
     """
     flag = 0
 
@@ -171,17 +171,17 @@ def play_game(word_list):
                 if lets == "u":
                     hand = sg.deal_hand(sg.settings.HAND_SIZE)
                     flag = 1
-                    sg.play_hand(hand, word_list, sg.settings.HAND_SIZE)
+                    sg.play_hand(hand, sg.settings.HAND_SIZE)
                     break
                 elif lets == "c":
                     hand = sg.deal_hand(sg.settings.HAND_SIZE)
                     flag = 1
-                    comp_play_hand(hand, word_list, sg.settings.HAND_SIZE)
+                    comp_play_hand(hand, sg.settings.HAND_SIZE)
                     break
                 elif lets == 'n':
                     hand = sg.deal_hand(sg.settings.HAND_SIZE)
                     flag = 1
-                    play_vs_comp(hand, word_list, sg.settings.HAND_SIZE)
+                    play_vs_comp(hand, sg.settings.HAND_SIZE)
                     break
 
                 print("Invalid command")
@@ -189,13 +189,13 @@ def play_game(word_list):
             while True:
                 lets = input("Enter u to have yourself play, c to have the computer play or n to play vs computer: ")
                 if lets == "u":
-                    sg.play_hand(hand, word_list, sg.settings.HAND_SIZE)
+                    sg.play_hand(hand, sg.settings.HAND_SIZE)
                     break
                 elif lets == "c":
-                    comp_play_hand(hand, word_list, sg.settings.HAND_SIZE)
+                    comp_play_hand(hand, sg.settings.HAND_SIZE)
                     break
                 elif lets == 'n':
-                    play_vs_comp(hand, word_list, sg.settings.HAND_SIZE)
+                    play_vs_comp(hand, sg.settings.HAND_SIZE)
                     break
                 print("Invalid command")
         elif letf == "r" and flag == 0:

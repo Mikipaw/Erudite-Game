@@ -115,13 +115,13 @@ class EruditeGameTests(unittest.TestCase):
         hand_orig = EruditeGame.get_frequency_dict(word)
         hand_copy = hand_orig.copy()
 
-        if not EruditeGame.is_valid_word(word, hand_copy, word_list):
+        if not EruditeGame.is_valid_word(word, hand_copy):
             print("FAILURE: test_is_valid_word()")
             print("\tExpected True, but got False for word: '" + word + "' and hand:", hand_orig)
 
             failure = True
 
-        if not EruditeGame.is_valid_word(word, hand_copy, word_list):
+        if not EruditeGame.is_valid_word(word, hand_copy):
             print("FAILURE: test_is_valid_word()")
 
             if hand_copy != hand_orig:
@@ -141,7 +141,7 @@ class EruditeGameTests(unittest.TestCase):
         hand = {'r': 1, 'a': 3, 'p': 2, 'e': 1, 't': 1, 'u': 1}
         word = "rapture"
 
-        if EruditeGame.is_valid_word(word, hand, word_list):
+        if EruditeGame.is_valid_word(word, hand):
             print("FAILURE: test_is_valid_word()")
             print("\tExpected False, but got True for word: '" + word + "' and hand:", hand)
 
@@ -151,7 +151,7 @@ class EruditeGameTests(unittest.TestCase):
         hand = {'n': 1, 'h': 1, 'o': 1, 'y': 1, 'd': 1, 'w': 1, 'e': 2}
         word = "honey"
 
-        if not EruditeGame.is_valid_word(word, hand, word_list):
+        if not EruditeGame.is_valid_word(word, hand):
             print("FAILURE: test_is_valid_word()")
             print("\tExpected True, but got False for word: '" + word + "' and hand:", hand)
 
@@ -161,7 +161,7 @@ class EruditeGameTests(unittest.TestCase):
         hand = {'r': 1, 'a': 3, 'p': 2, 't': 1, 'u': 2}
         word = "honey"
 
-        if EruditeGame.is_valid_word(word, hand, word_list):
+        if EruditeGame.is_valid_word(word, hand):
             print("FAILURE: test_is_valid_word()")
             print("\tExpected False, but got True for word: '" + word + "' and hand:", hand)
 
@@ -171,7 +171,7 @@ class EruditeGameTests(unittest.TestCase):
         hand = {'e': 1, 'v': 2, 'n': 1, 'i': 1, 'l': 2}
         word = "evil"
 
-        if not EruditeGame.is_valid_word(word, hand, word_list):
+        if not EruditeGame.is_valid_word(word, hand):
             print("FAILURE: test_is_valid_word()")
             print("\tExpected True, but got False for word: '" + word + "' and hand:", hand)
 
@@ -180,7 +180,7 @@ class EruditeGameTests(unittest.TestCase):
         # test 6
         word = "even"
 
-        if EruditeGame.is_valid_word(word, hand, word_list):
+        if EruditeGame.is_valid_word(word, hand):
             print("FAILURE: test_is_valid_word()")
             print("\tExpected False, but got True for word: '" + word + "' and hand:", hand)
             print("\t(If this is the only failure, make sure is_valid_word() isn't mutating its inputs)")

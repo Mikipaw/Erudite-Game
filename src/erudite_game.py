@@ -4,6 +4,7 @@ import src.settings as settings
 from threading import Timer
 
 WORDLIST_FILENAME = "../words.txt"
+WORDS_DICT = dict()
 
 def load_words_from_file():
     """
@@ -18,6 +19,7 @@ def load_words_from_file():
     word_list = []
     for line in input_file:
         word_list.append(line.strip().lower())
+        WORDS_DICT[tuple(line.strip().lower())] = line.strip().lower()
 
     print("  ", len(word_list), "words loaded.")
     input_file.close()
@@ -135,19 +137,18 @@ def update_hand(hand, word):
     return chand
 
 
-def is_valid_word(word, hand, word_list):
+def is_valid_word(word, hand):
     """
-    Returns True if word is in the word_list and is entirely
+    Returns True if word is in the WORDS_DICT and is entirely
     composed of letters in the hand. Otherwise, returns False.
 
-    Does not mutate hand or word_list.
+    Does not mutate hand or WORDS_DICT.
 
     word: string
     hand: dictionary (string -> int)
-    word_list: list of lowercase strings
     """
 
-    if word not in word_list:
+    if not tuple(word) in WORDS_DICT or word not in WORDS_DICT[tuple(word)]:
         return False
 
     chand = hand.copy()
@@ -176,7 +177,7 @@ def calculate_hand_len(hand):
     return current_sum
 
 
-def play_hand(hand, word_list, n, single = True, dif = 'e'):
+def play_hand(hand, n, single = True, dif = 'e'):
     """
     Returns sum of points for words founded.
 
@@ -197,7 +198,6 @@ def play_hand(hand, word_list, n, single = True, dif = 'e'):
       inputs a "."
 
       hand: dictionary (string -> int)
-      word_list: list of lowercase strings
       n: integer (HAND_SIZE; required for additional points)
       single: bool (default True)
       dif: str (default 'e' means easy)
@@ -206,6 +206,7 @@ def play_hand(hand, word_list, n, single = True, dif = 'e'):
     current_sum = 0
 
     with open('../data/game_settings.txt', 'r') as f:
+        f.readline()
         line = f.readline()
         nums = re.findall(r'\d+', line)
         settings.DEFAULT_TIME = int(nums[0])
@@ -233,7 +234,7 @@ def play_hand(hand, word_list, n, single = True, dif = 'e'):
             break
 
         else:
-            if not is_valid_word(word, hand, word_list):
+            if not is_valid_word(word, hand):
                 print("Invalid word")
             else:
                 current_sum += get_word_score(word, n)
@@ -250,7 +251,7 @@ def play_hand(hand, word_list, n, single = True, dif = 'e'):
     return current_sum
 
 
-def play_game(word_list):
+def play_game():
     """
     Allow the user to play an arbitrary number of hands.
 
@@ -273,11 +274,11 @@ def play_game(word_list):
         if let == "n":
             hand = deal_hand(settings.HAND_SIZE)
             flag = 1
-            play_hand(hand, word_list, settings.HAND_SIZE)
+            play_hand(hand, settings.HAND_SIZE)
         elif let == "r" and flag == 0:
             print("You have not played a hand yet. Please play a new hand first!")
         elif let == "r" and flag == 1:
-            play_hand(hand, word_list, settings.HAND_SIZE)
+            play_hand(hand, settings.HAND_SIZE)
         elif let == "e":
             break
         else:
@@ -285,5 +286,5 @@ def play_game(word_list):
 
 
 if __name__ == '__main__':
-    wordList = load_words_from_file()
-    play_game(wordList)
+    load_words_from_file()
+    play_game()

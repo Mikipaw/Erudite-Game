@@ -1,4 +1,8 @@
-from src.erudite_game import *
+from src.erudite_game import get_word_score
+from src.erudite_game import update_hand
+from src.erudite_game import get_frequency_dict
+from src.erudite_game import is_valid_word
+from src.erudite_game import load_words_from_file
 
 def test_get_word_score():
     """
@@ -104,13 +108,13 @@ def test_is_valid_word(word_list):
     hand_orig = get_frequency_dict(word)
     hand_copy = hand_orig.copy()
 
-    if not is_valid_word(word, hand_copy, word_list):
+    if not is_valid_word(word, hand_copy):
         print("FAILURE: test_is_valid_word()")
         print("\tExpected True, but got False for word: '" + word + "' and hand:", hand_orig)
 
         failure = True
 
-    if not is_valid_word(word, hand_copy, word_list):
+    if not is_valid_word(word, hand_copy):
         print("FAILURE: test_is_valid_word()")
 
         if hand_copy != hand_orig:
@@ -130,7 +134,7 @@ def test_is_valid_word(word_list):
     hand = {'r': 1, 'a': 3, 'p': 2, 'e': 1, 't': 1, 'u': 1}
     word = "rapture"
 
-    if is_valid_word(word, hand, word_list):
+    if is_valid_word(word, hand):
         print("FAILURE: test_is_valid_word()")
         print("\tExpected False, but got True for word: '" + word + "' and hand:", hand)
 
@@ -140,7 +144,7 @@ def test_is_valid_word(word_list):
     hand = {'n': 1, 'h': 1, 'o': 1, 'y': 1, 'd': 1, 'w': 1, 'e': 2}
     word = "honey"
 
-    if not is_valid_word(word, hand, word_list):
+    if not is_valid_word(word, hand):
         print("FAILURE: test_is_valid_word()")
         print("\tExpected True, but got False for word: '" + word + "' and hand:", hand)
 
@@ -150,7 +154,7 @@ def test_is_valid_word(word_list):
     hand = {'r': 1, 'a': 3, 'p': 2, 't': 1, 'u': 2}
     word = "honey"
 
-    if is_valid_word(word, hand, word_list):
+    if is_valid_word(word, hand):
         print("FAILURE: test_is_valid_word()")
         print("\tExpected False, but got True for word: '" + word + "' and hand:", hand)
 
@@ -160,7 +164,7 @@ def test_is_valid_word(word_list):
     hand = {'e': 1, 'v': 2, 'n': 1, 'i': 1, 'l': 2}
     word = "evil"
 
-    if not is_valid_word(word, hand, word_list):
+    if not is_valid_word(word, hand):
         print("FAILURE: test_is_valid_word()")
         print("\tExpected True, but got False for word: '" + word + "' and hand:", hand)
 
@@ -169,7 +173,7 @@ def test_is_valid_word(word_list):
     # test 6
     word = "even"
 
-    if is_valid_word(word, hand, word_list):
+    if is_valid_word(word, hand):
         print("FAILURE: test_is_valid_word()")
         print("\tExpected False, but got True for word: '" + word + "' and hand:", hand)
         print("\t(If this is the only failure, make sure is_valid_word() isn't mutating its inputs)")
