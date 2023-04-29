@@ -1,6 +1,6 @@
 import random
 import re
-import src.settings as settings
+import settings
 from threading import Timer
 
 WORDLIST_FILENAME = "../words.txt"
@@ -29,7 +29,7 @@ def load_words_from_file():
 def get_frequency_dict(sequence):
     """
     Returns a dictionary where the keys are elements of the sequence
-    and the values are integer counts, for the number of times that
+    and the values are integer cЫыounts, for the number of times that
     an element is repeated in the sequence.
 
     sequence: string or list

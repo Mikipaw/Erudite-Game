@@ -1,4 +1,4 @@
-import src.erudite_game as sg
+import erudite_game as sg
 import re
 from itertools import permutations
 
@@ -155,7 +155,6 @@ def play_game():
 
     """
     flag = 0
-
 
     with open('../data/game_settings.txt', 'r') as f:
         line = f.readline()

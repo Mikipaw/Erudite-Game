@@ -1,6 +1,6 @@
 import unittest
 
-import src.erudite_game as EruditeGame
+import erudite_game as EruditeGame
 
 class EruditeGameTests(unittest.TestCase):
     def test_get_word_score(self):

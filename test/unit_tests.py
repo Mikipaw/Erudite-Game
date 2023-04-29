@@ -1,8 +1,8 @@
-from src.erudite_game import get_word_score
-from src.erudite_game import update_hand
-from src.erudite_game import get_frequency_dict
-from src.erudite_game import is_valid_word
-from src.erudite_game import load_words_from_file
+from erudite_game import get_word_score
+from erudite_game import update_hand
+from erudite_game import get_frequency_dict
+from erudite_game import is_valid_word
+from erudite_game import load_words_from_file
 
 def test_get_word_score():
     """
